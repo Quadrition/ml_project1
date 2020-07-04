@@ -2,7 +2,9 @@ import pandas as pd
 from kmeans import KMeans
 import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
+from sklearn.cluster import KMeans
 import numpy as np
+import seaborn
 
 
 def normalize_data(data):
@@ -67,7 +69,25 @@ def analyze_with_pca():
 
 
 def analyze_without_pca():
-    pass
+    df = pd.read_csv('credit_card_data.csv')
+    df = df.fillna(df.median())
+
+    best_cols = ['BALANCE', 'PURCHASES', 'CASH_ADVANCE', 'CREDIT_LIMIT', 'PAYMENTS', 'MINIMUM_PAYMENTS']
+
+    data = df[best_cols].iloc[:, 1:].values
+
+    # plot_optimal_k(data)
+
+    n_clusters = 8
+
+    k_means = KMeans(n_clusters=n_clusters, init="k-means++", n_init=10, max_iter=300)
+    y = k_means.fit_predict(data)
+
+    df['cluster'] = y
+    best_cols.append('cluster')
+
+    seaborn.pairplot(df[best_cols], hue='cluster')
+    plt.show()
 
 
 def plot_optimal_k(data):
@@ -86,8 +106,8 @@ def plot_optimal_k(data):
 
 
 def main():
-    analyze_with_pca()
-    # analyze_without_pca()
+    # analyze_with_pca()
+    analyze_without_pca()
 
 
 if __name__ == '__main__':
