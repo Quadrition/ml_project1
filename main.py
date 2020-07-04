@@ -2,10 +2,11 @@ import pandas as pd
 from kmeans import KMeans
 import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
-from sklearn.cluster import KMeans
+from sklearn import cluster
+from sklearn import tree
 import numpy as np
+import copy
 import seaborn
-
 
 def normalize_data(data):
     cols = len(data[0])
@@ -25,7 +26,8 @@ def normalize_data(data):
 def analyze_with_pca():
     df = pd.read_csv('credit_card_data.csv')
     df = df.fillna(df.median())
-    data = df.iloc[:, 1:].values
+    original_data = df.iloc[:, 1:].values
+    data = copy.deepcopy(original_data)
 
     normalize_data(data)
 
@@ -53,7 +55,13 @@ def analyze_with_pca():
     n_clusters = 9
 
     k_means = KMeans(n_clusters=n_clusters, max_iter=100)
-    k_means.fit(scores)
+    y_predict = k_means.fit(scores)
+
+    clf = tree.DecisionTreeClassifier()
+    clf = clf.fit(original_data, y_predict)
+
+    text_tree = tree.export_text(clf, feature_names=list(df.columns)[1:])
+    print(text_tree)
 
     colors = {0: 'red', 1: 'green', 2: 'blue', 3: 'purple', 4: 'orange', 5: 'cyan', 6: 'yellow', 7: 'indigo', 8: 'pink',
               9: 'black'}
@@ -80,7 +88,7 @@ def analyze_without_pca():
 
     n_clusters = 8
 
-    k_means = KMeans(n_clusters=n_clusters, init="k-means++", n_init=10, max_iter=300)
+    k_means = cluster.KMeans(n_clusters=n_clusters, init="k-means++", n_init=10, max_iter=300)
     y = k_means.fit_predict(data)
 
     df['cluster'] = y
@@ -106,8 +114,8 @@ def plot_optimal_k(data):
 
 
 def main():
-    # analyze_with_pca()
-    analyze_without_pca()
+    analyze_with_pca()
+    # analyze_without_pca()
 
 
 if __name__ == '__main__':

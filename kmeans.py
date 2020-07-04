@@ -13,6 +13,7 @@ class KMeans:
 
     def fit(self, data, normalize=True):
         self.data = data
+        predict = [0] * len(self.data)
 
         if normalize:
             self.normalize_data()
@@ -29,9 +30,10 @@ class KMeans:
             for cluster in self.clusters:
                 cluster.data = []
 
-            for datum in self.data:
-                cluster_index = self.predict(datum)
-                self.clusters[cluster_index].data.append(datum)
+            for i in range(len(self.data)):
+                cluster_index = self.predict(self.data[i])
+                self.clusters[cluster_index].data.append(self.data[i])
+                predict[i] = cluster_index
 
             not_moves = True
             for cluster in self.clusters:
@@ -43,6 +45,7 @@ class KMeans:
             print('Iter no: ' + str(iter_no))
             iter_no += 1
         print('Finished iterating')
+        return predict
 
     def predict(self, datum):
         min_distance = None
