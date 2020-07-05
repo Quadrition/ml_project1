@@ -97,12 +97,15 @@ def analyze_with_pca():
     for i in range(len(original_data)):
         summary[y_predict[i]].append(original_data[i])
 
+    colors = {0: 'red', 1: 'green', 2: 'blue', 3: 'purple', 4: 'orange', 5: 'cyan', 6: 'yellow', 7: 'indigo', 8: 'pink',
+              9: 'black'}
+
     print(
        '===================================================Summary===================================================')
     for i in range(len(summary)):
         if i != 0:
             print('\n\n')
-        print('\nCluster ' + str(i + 1))
+        print('\nCluster ' + str(i + 1) + ', color: ' + colors[i])
         print('--------------------------------------------------------------------')
         print(get_description(i))
         print('--------------------------------------------------------------------')
@@ -122,8 +125,6 @@ def analyze_with_pca():
     text_tree = tree.export_text(clf, feature_names=list(columns))
     print(text_tree)
 
-    colors = {0: 'red', 1: 'green', 2: 'blue', 3: 'purple', 4: 'orange', 5: 'cyan', 6: 'yellow', 7: 'indigo', 8: 'pink',
-              9: 'black'}
     plt.figure()
     for idx, cluster in enumerate(k_means.clusters):
         plt.scatter(cluster.center[0], cluster.center[1], c=colors[idx], marker='x', s=100)
@@ -182,8 +183,8 @@ def plot_optimal_k(data):
 
 
 def main():
-    # analyze_with_pca()
-    analyze_without_pca()
+    analyze_with_pca()
+    # analyze_without_pca()
 
 
 if __name__ == '__main__':
