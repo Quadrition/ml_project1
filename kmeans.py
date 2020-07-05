@@ -42,9 +42,7 @@ class KMeans:
 
                 not_moves = not_moves and cluster.center == old_center
 
-            print('Iter no: ' + str(iter_no))
             iter_no += 1
-        print('Finished iterating')
         return predict
 
     def predict(self, datum):

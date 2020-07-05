@@ -26,7 +26,7 @@ def normalize_data(data):
 def analyze_with_pca():
     df = pd.read_csv('credit_card_data.csv')
     df = df.fillna(df.median())
-    original_data = df.iloc[:, 1:].values
+    original_data = df.iloc[:500, 1:].values
     data = copy.deepcopy(original_data)
 
     normalize_data(data)
@@ -57,10 +57,37 @@ def analyze_with_pca():
     k_means = KMeans(n_clusters=n_clusters, max_iter=100)
     y_predict = k_means.fit(scores)
 
+    columns = list(df.columns)[1:]
+
+    summary = [[]] * n_clusters
+    for i in range(len(original_data)):
+        summary[y_predict[i]].append(original_data[i])
+
+    print(
+        '===================================================Summary===================================================')
+    for i in range(len(summary)):
+        if i != 0:
+            print('\n\n')
+        print('\nCluster ' + str(i + 1))
+        print('--------------------------------------------------------------------')
+        print('Description')
+        print('--------------------------------------------------------------------')
+        for j in range(len(columns)):
+            if j != 0:
+                print()
+            print('Attribute ' + columns[j] + ':')
+            print('\tMaximum value: ' + str(max([datum[j] for datum in summary[i]])))
+            print('\tThird quartile: ' + str(np.percentile([datum[j] for datum in summary[i]], 75)))
+            print('\tMean: ' + str(np.percentile([datum[j] for datum in summary[i]], 50)))
+            print('\tFirst quartile: ' + str(np.percentile([datum[j] for datum in summary[i]], 25)))
+            print('\tMinimum value: ' + str(min([datum[j] for datum in summary[i]])))
+
+    print(
+        '\n\n\n\n==========================================Decision tree==========================================\n\n')
     clf = tree.DecisionTreeClassifier()
     clf = clf.fit(original_data, y_predict)
 
-    text_tree = tree.export_text(clf, feature_names=list(df.columns)[1:])
+    text_tree = tree.export_text(clf, feature_names=list(columns))
     print(text_tree)
 
     colors = {0: 'red', 1: 'green', 2: 'blue', 3: 'purple', 4: 'orange', 5: 'cyan', 6: 'yellow', 7: 'indigo', 8: 'pink',
