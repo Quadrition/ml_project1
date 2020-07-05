@@ -23,10 +23,44 @@ def normalize_data(data):
             row[col] = (row[col] - mean) / std
 
 
+def get_description(cluster_index):
+    if cluster_index == 0:
+        return 'Korisnici najcesce menjaju balans od svih. Obicno ne placa puno novca unapred, ne radi to\n' \
+               'cesto i nema puno transakcija sa uplacenim novcem unapred. Takodje, najredje od svih kupuju jednokratno.\n' \
+               'Najduze im traju usluge kreditne kartice'
+    elif cluster_index == 1:
+        return 'Korisnicima je ukupna potrosnja najmanja od svih, a pojedinacna potrosnja im je takodje mala. Iznos\n' \
+               'potrosen na kupovinu na rate im je najmanji od svih, imaju mali kreditni limit i usluge na krtici im\n' \
+               'dugo vaze.'
+    elif cluster_index == 2:
+        return 'Korisnici imaju najveci balans od svih. Kreditni limit im je jedan od najvecih, a usluge kreditne\n' \
+               'kartice im traju osrednje.'
+    elif cluster_index == 3:
+        return 'Korisnici najcesce imaju jednokratne kupovine. Uglavnom ne uplacuju puno unapred para unapred, ne rade\n' \
+               'to cesto i nemaju mnogo transakcija vezanih za to. Minimalan iznos koji su uplatili na karticu im je mali\n' \
+               'i dugo im vaze usluge kartice.'
+    elif cluster_index == 4:
+        return 'Korisnici imaju jedan od najmanjih balansa. Najredje od svih vrse kupovinu, i usluge kreditne kartice\n' \
+               'im traju manje od svih.'
+    elif cluster_index == 5:
+        return 'Korisnici daju najmanje novca unapred, a i nemaju mnogo transakcija vezanih za to. Najcesce vrse kupovinu, \n' \
+               'od svih, ali cesto i kupuju na rate. Ne uplacuju puno para unapred i nemaju puno transakcija vezanih za to.'
+    elif cluster_index == 6:
+        return 'Korisnici imaju najveci potroseni iznos od svih. Najvise trose na jednokratnu kupovinu i imaju najveci\n' \
+               'iznos potrosen na kupovinu na rate. Cesto vrse kupovinu, imaju veliki limit na kredit i imaju veliki\n' \
+               'broj transakcija vezanih za kupovinu.'
+    elif cluster_index == 7:
+        return 'Korisnici cesto menjaju balans, daju najvise novca unapred, ali rade to malo cesce od ostalih i imaju\n' \
+               'veci broj transakcija vezanih za to. Imaju drugo po redu najkrace vazenje usluga kreditne kartice.'
+    else:
+        return 'Korisnici imaju najmanji balans od svih, najredje im se menja balas i imaju najmanju potrosnju na\n' \
+               'jednokratnu kupovinu.'
+
+
 def analyze_with_pca():
     df = pd.read_csv('credit_card_data.csv')
     df = df.fillna(df.median())
-    original_data = df.iloc[:500, 1:].values
+    original_data = df.iloc[:, 1:].values
     data = copy.deepcopy(original_data)
 
     normalize_data(data)
@@ -59,22 +93,20 @@ def analyze_with_pca():
 
     columns = list(df.columns)[1:]
 
-    summary = [[]] * n_clusters
+    summary = [[], [], [], [], [], [], [], [], []]
     for i in range(len(original_data)):
         summary[y_predict[i]].append(original_data[i])
 
     print(
-        '===================================================Summary===================================================')
+       '===================================================Summary===================================================')
     for i in range(len(summary)):
         if i != 0:
             print('\n\n')
         print('\nCluster ' + str(i + 1))
         print('--------------------------------------------------------------------')
-        print('Description')
+        print(get_description(i))
         print('--------------------------------------------------------------------')
         for j in range(len(columns)):
-            if j != 0:
-                print()
             print('Attribute ' + columns[j] + ':')
             print('\tMaximum value: ' + str(max([datum[j] for datum in summary[i]])))
             print('\tThird quartile: ' + str(np.percentile([datum[j] for datum in summary[i]], 75)))
@@ -83,7 +115,7 @@ def analyze_with_pca():
             print('\tMinimum value: ' + str(min([datum[j] for datum in summary[i]])))
 
     print(
-        '\n\n\n\n==========================================Decision tree==========================================\n\n')
+       '\n\n\n\n==========================================Decision tree==========================================\n\n')
     clf = tree.DecisionTreeClassifier()
     clf = clf.fit(original_data, y_predict)
 
@@ -98,8 +130,6 @@ def analyze_with_pca():
         for datum in cluster.data:
             plt.scatter(datum[0], datum[1], c=colors[idx])
 
-    plt.xlabel('Component 1')
-    plt.ylabel('Component 2')
     plt.show()
 
 
