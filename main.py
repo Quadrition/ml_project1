@@ -154,6 +154,17 @@ def analyze_without_pca():
     seaborn.pairplot(df[best_cols], hue='cluster')
     plt.show()
 
+    print('Na sledecim graficima mozemo da primetimo sledece klastere')
+    print('-----------------------------------------------------------')
+    print('1. Grupa koja ima skupe kupovine i ima limit za kredit koji je nesto jaci od proseka. Ovo je mala grupa ljudi.')
+    print('2. Grupa koja uglavnom uplacuje pare u napred i ima velike kupovine, koja je takodje mala grupa.')
+    print('3. Grupa koja je druga po redu po skupim kupovinama (posle 1. grupe).')
+    print('4. Grupa koja ima najveci limit za kredit ali je stedljiva (nema puno kupovina). Ovo je treca najveca grupa.')
+    print('5. Grupa koja uglavnom uzima pare unapred, ali ima jeftine kupovine.')
+    print('6. Grupa koja malo trosi i ima mali limit za kredit, imaju 2. po redu najmanji balans. Ovo je druga najveca grupa.')
+    print('7. Grupa sa najmanjim limitom za kredit koja ima najjeftinije kupovine. Ovo je najveca grupa od svih.')
+    print('8. Grupa ima najvece minimalne kupovine, ali imaju 2. po redu najmanji limit za kredit.')
+
 
 def plot_optimal_k(data):
     plt.figure()
@@ -171,8 +182,8 @@ def plot_optimal_k(data):
 
 
 def main():
-    analyze_with_pca()
-    # analyze_without_pca()
+    # analyze_with_pca()
+    analyze_without_pca()
 
 
 if __name__ == '__main__':
